@@ -21,12 +21,12 @@ type Counter struct {
 // and returns a usable Counter object.
 func NewCounterFrom(opts prometheus.CounterOpts, labelNames []string) *Counter {
 	cv := prometheus.NewCounterVec(opts, labelNames)
-	prometheus.MustRegister(cv)
-	return NewCounter(cv)
+	return NewCounter(prometheus.DefaultRegisterer, cv)
 }
 
 // NewCounter wraps the CounterVec and returns a usable Counter object.
-func NewCounter(cv *prometheus.CounterVec) *Counter {
+func NewCounter(registerer prometheus.Registerer, cv *prometheus.CounterVec) *Counter {
+	registerer.Register(cv)
 	return &Counter{
 		cv: cv,
 	}
@@ -55,12 +55,12 @@ type Gauge struct {
 // and returns a usable Gauge object.
 func NewGaugeFrom(opts prometheus.GaugeOpts, labelNames []string) *Gauge {
 	gv := prometheus.NewGaugeVec(opts, labelNames)
-	prometheus.MustRegister(gv)
-	return NewGauge(gv)
+	return NewGauge(prometheus.DefaultRegisterer, gv)
 }
 
 // NewGauge wraps the GaugeVec and returns a usable Gauge object.
-func NewGauge(gv *prometheus.GaugeVec) *Gauge {
+func NewGauge(registerer prometheus.Registerer, gv *prometheus.GaugeVec) *Gauge {
+	registerer.Register(gv)
 	return &Gauge{
 		gv: gv,
 	}
